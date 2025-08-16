@@ -6,7 +6,11 @@ const createUser = async (req, res) => {
   try {
     const { name, email } = req.body;
 
-    // Validation (basic)
+    // Validation of input
+    if (!name || typeof name !== 'string' || !email || typeof email !== 'string') {
+      return res.status(400).json({ message: 'Invalid input' });
+    }
+    
     if (!name || !email) {
       return res.status(400).json({ message: 'Name and email are required' });
     }
@@ -30,7 +34,37 @@ const getUsers = async (req, res) => {
   }
 };
 
+
+// @desc    Update user
+// @route   PUT /api/users/:id
+const updateUser = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, email },
+      { new: true, runValidators: true }
+    );
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ message: 'User deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   createUser,
-  getUsers
+  getUsers,
+  updateUser,
+  deleteUser
 };
