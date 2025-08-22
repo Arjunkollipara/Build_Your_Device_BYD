@@ -38,7 +38,7 @@ function App() {
   if (!me) {
     return (
       <div style={{ padding: 20 }}>
-        <h1>CampusCollab — Auth</h1>
+        <h1>CampusCollab</h1>
         <SignupForm onAuthed={handleAuthed} />
         <LoginForm onAuthed={handleAuthed} />
       </div>
