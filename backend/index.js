@@ -1,4 +1,3 @@
-// server/index.js
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -35,3 +34,6 @@ app.listen(PORT, () => console.log(`🚀 Server running on : http://localhost/${
 
 const projectRoutes = require('./routes/projectRoutes');
 app.use('/api/projects', projectRoutes);
+
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);

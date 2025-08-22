@@ -62,9 +62,19 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const getMe = async (req, res) => {
+  const u = req.user;
+  res.json({
+    _id: u._id, name: u.name, email: u.email, skills: u.skills,
+    bio: u.bio, links: u.links, createdAt: u.createdAt, updatedAt: u.updatedAt
+  });
+};
+
+ 1 
 module.exports = {
   createUser,
   getUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  getMe
 };
