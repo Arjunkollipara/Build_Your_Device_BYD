@@ -1,4 +1,4 @@
-# **ProjectHub – Collaborative Project Showcase & Team Builder**
+# **BYD-BUILD YOUR DEVICE – Collaborative Project Showcase & Team Builder**
 
 ## **Overview**
 
