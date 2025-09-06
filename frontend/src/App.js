@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from "react-router-dom";
 import { getMe } from "./api/authApi";
+import "./App.css";
 
 // pages
 import ProfilePage from "./pages/ProfilePage";
@@ -19,7 +20,7 @@ function App() {
       try {
         const u = await getMe();
         setMe(u);
-      } catch {
+      } catch (err) {
         setMe(null);
       }
     })();
@@ -31,10 +32,23 @@ function App() {
     setMe(null);
   };
 
+  // Check if profile is complete: bio is not empty and skills array has at least one skill
+  const isProfileComplete = me && me.bio && me.bio.trim() !== "" && me.skills && me.skills.length > 0;
+
+  // Helper to refresh user info after profile update
+  const refreshMe = async () => {
+    try {
+      const u = await getMe();
+      setMe(u);
+    } catch (err) {
+      setMe(null);
+    }
+  };
+
   if (!me) {
     // show login/signup if not authenticated
     return (
-      <div style={{ padding: 20 }}>
+      <div className="app-container">
         <h1>CampusCollab</h1>
         <SignupForm onAuthed={handleAuthed} />
         <LoginForm onAuthed={handleAuthed} />
@@ -42,22 +56,9 @@ function App() {
     );
   }
 
-  // Check if profile is complete: bio is not empty and skills array has at least one skill
-  const isProfileComplete = me.bio && me.bio.trim() !== "" && me.skills && me.skills.length > 0;
-
-  // Helper to refresh user info after profile update
-  const refreshMe = async () => {
-    try {
-      const u = await getMe();
-      setMe(u);
-    } catch {
-      setMe(null);
-    }
-  };
-
   return (
     <Router>
-      <div style={{ padding: 20 }}>
+      <div className="app-container">
         <h1>CampusCollab</h1>
         <p>
           Logged in as: {me.name} ({me.email}){" "}
@@ -65,19 +66,16 @@ function App() {
           <button style={{ marginLeft: 10 }} onClick={handleLogout}>Logout</button>
         </p>
 
-        {/* Always show Profile first after login */}
-        <nav style={{ marginBottom: 20 }}>
-          <Link to="/profile" style={{ marginRight: 10 }}>Profile</Link>
+        <nav>
+          <Link to="/profile">Profile</Link>
           <Link to="/projects">
             <button style={{ marginLeft: 10 }}>See Available Projects</button>
           </Link>
         </nav>
 
-        {/* Routes */}
         <Routes>
           <Route path="/profile" element={<ProfilePage me={me} onProfileUpdated={refreshMe} />} />
           <Route path="/projects" element={<ProjectsPage me={me} />} />
-          {/* Default route: always go to profile after login */}
           <Route path="/" element={<Navigate to="/profile" />} />
         </Routes>
       </div>

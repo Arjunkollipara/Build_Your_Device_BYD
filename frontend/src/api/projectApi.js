@@ -1,9 +1,7 @@
-import axios from 'axios';
+import api from './axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api/projects' });
-
-export const createProject = (data) => API.post('/', data);
-export const getProjects = () => API.get('/');
-export const joinProject = (id, userId) => API.post(`/${id}/join`, { userId });
-export const toggleProject = (id) => API.put(`/${id}/toggle`);
-export const updateProject = (id, data) => API.put(`/${id}`, data);
+export const createProject = (data) => api.post('/api/projects', data);
+export const getProjects = () => api.get('/api/projects');
+export const joinProject = (id, userId) => api.post(`/api/projects/${id}/join`, { userId });
+export const toggleProject = (id) => api.put(`/api/projects/${id}/toggle`);
+export const updateProject = (id, data) => api.put(`/api/projects/${id}`, data);
