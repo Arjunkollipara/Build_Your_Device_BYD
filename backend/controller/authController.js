@@ -10,6 +10,7 @@ const sanitize = (u) => ({
   _id: u._id,
   name: u.name,
   email: u.email,
+  role: u.role,
   skills: u.skills,
   bio: u.bio,
   links: u.links,
@@ -19,7 +20,7 @@ const sanitize = (u) => ({
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password)
       return res.status(400).json({ message: 'name, email, password are required' });
@@ -28,7 +29,9 @@ exports.signup = async (req, res) => {
     if (exists) return res.status(409).json({ message: 'Email already in use' });
 
     const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hash });
+    // Only allow 'user' or 'admin', default to 'user'
+    const userRole = role === 'admin' ? 'admin' : 'user';
+    const user = await User.create({ name, email, password: hash, role: userRole });
 
     const token = signToken(user._id);
     res.status(201).json({ user: sanitize(user), token });

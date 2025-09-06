@@ -2,7 +2,26 @@ const Profile = require("../models/Profile")
 
 const createOrUpdateProfile = async (req, res) => {
   try {
-    const { userId, bio, avatar, details, skills, links, achievements } = req.body;
+    const {
+      userId,
+      bio = "",
+      avatar = "",
+      details = "",
+      skills = [],
+      links = {},
+      achievements = [],
+    } = req.body;
+
+    // Clean up links: only set if valid or blank
+    const cleanLinks = {
+      github: links.github && links.github.match(/^https?:\/\/(www\.)?github\.com\/[A-Za-z0-9_-]+$/) ? links.github : "",
+      linkedin: links.linkedin && links.linkedin.match(/^https?:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9_-]+$/) ? links.linkedin : "",
+      portfolio: links.portfolio || "",
+    };
+
+    // Clean up skills/achievements: ensure arrays
+    const safeSkills = Array.isArray(skills) ? skills : [];
+    const safeAchievements = Array.isArray(achievements) ? achievements : [];
 
     let profile = await Profile.findOne({ userId });
 
@@ -10,12 +29,12 @@ const createOrUpdateProfile = async (req, res) => {
       // update
       profile = await Profile.findOneAndUpdate(
         { userId },
-        { bio, avatar, details, skills, links, achievements },
+        { bio, avatar, details, skills: safeSkills, links: cleanLinks, achievements: safeAchievements },
         { new: true }
       );
     } else {
       // create
-      profile = new Profile({ userId, bio, avatar, details, skills, links, achievements });
+      profile = new Profile({ userId, bio, avatar, details, skills: safeSkills, links: cleanLinks, achievements: safeAchievements });
       await profile.save();
     }
 

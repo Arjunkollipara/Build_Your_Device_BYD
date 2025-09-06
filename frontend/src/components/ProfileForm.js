@@ -1,17 +1,30 @@
-import React, { useState } from "react";
-const { saveProfile } = require("../api/profileApi");
+import React, { useState, useEffect } from "react";
+import { createOrUpdateProfile } from "../api/profileApi";
 
-const ProfileForm = ({ userId, onProfileSaved }) => {
+const ProfileForm = ({ me, profile, onProfileSaved }) => {
   const [form, setForm] = useState({
-    bio: "",
-    avatar: "",
-    details: "",
-    skills: "",
-    github: "",
-    linkedin: "",
-    portfolio: "",
-    achievements: "",
+    bio: profile?.bio || "",
+    avatar: profile?.avatar || "",
+    details: profile?.details || "",
+    skills: (profile?.skills || []).join(", "),
+    github: profile?.links?.github || "",
+    linkedin: profile?.links?.linkedin || "",
+    portfolio: profile?.links?.portfolio || "",
+    achievements: (profile?.achievements || []).join(", "),
   });
+
+  useEffect(() => {
+    setForm({
+      bio: profile?.bio || "",
+      avatar: profile?.avatar || "",
+      details: profile?.details || "",
+      skills: (profile?.skills || []).join(", "),
+      github: profile?.links?.github || "",
+      linkedin: profile?.links?.linkedin || "",
+      portfolio: profile?.links?.portfolio || "",
+      achievements: (profile?.achievements || []).join(", "),
+    });
+  }, [profile]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,21 +34,21 @@ const ProfileForm = ({ userId, onProfileSaved }) => {
     e.preventDefault();
 
     const profileData = {
-      userId,
+      userId: me._id,
       bio: form.bio,
       avatar: form.avatar,
       details: form.details,
-      skills: form.skills.split(",").map((s) => s.trim()),
+      skills: form.skills.split(",").map((s) => s.trim()).filter(Boolean),
       links: {
         github: form.github,
         linkedin: form.linkedin,
         portfolio: form.portfolio,
       },
-      achievements: form.achievements.split(",").map((a) => a.trim()),
+      achievements: form.achievements.split(",").map((a) => a.trim()).filter(Boolean),
     };
 
-    const res = await saveProfile(profileData);
-    onProfileSaved(res.data); // notify parent
+    const res = await createOrUpdateProfile(profileData);
+    if (onProfileSaved) onProfileSaved(res.data); // notify parent
   };
 
   return (

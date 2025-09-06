@@ -9,4 +9,5 @@ router.post("/", createOrUpdateProfile);
 // GET → fetch profile by userId
 router.get("/:userId", getProfileByUserId);
 
+
 module.exports = router;

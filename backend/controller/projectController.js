@@ -4,9 +4,11 @@ const User = require('../models/User');
 // POST /api/projects
 const createProject = async (req, res) => {
   try {
-    const { title, description = '', requiredSkills = [], ownerId } = req.body;
-    if (!title || !ownerId) return res.status(400).json({ message: 'title and ownerId are required' });
+    const { title, description = '', requiredSkills = [] } = req.body;
+    if (!title) return res.status(400).json({ message: 'title is required' });
 
+    // Use authenticated user as owner
+    const ownerId = req.user._id;
     const owner = await User.findById(ownerId);
     if (!owner) return res.status(404).json({ message: 'Owner not found' });
 
@@ -16,6 +18,7 @@ const createProject = async (req, res) => {
 
     res.status(201).json(project);
   } catch (err) {
+    console.error('Project creation error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -86,6 +89,10 @@ const toggleOpen = async (req, res) => {
   try {
     const p = await Project.findById(req.params.id);
     if (!p) return res.status(404).json({ message: 'Project not found' });
+    // Only owner can toggle open/close
+    if (p.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to close/open this project' });
+    }
     p.isOpen = !p.isOpen;
     await p.save();
     res.json(p);
@@ -94,11 +101,32 @@ const toggleOpen = async (req, res) => {
   }
 };
 
+// DELETE /api/projects/:id
+const deleteProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+
+    // Check if the logged-in user is the owner
+    if (project.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to delete this project' });
+    }
+
+    await project.remove();
+    res.json({ message: 'Project deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
 module.exports = {
     createProject,
     getProjects,
     getProjectById,
     updateProject,
     joinProject,
-    toggleOpen
+    toggleOpen,
+    deleteProject
     };
