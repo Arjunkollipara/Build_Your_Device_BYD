@@ -33,7 +33,8 @@ const getProjects = async (req, res) => {
 
     const projects = await Project.find(q)
       .populate('owner', 'name email')
-      .populate('members', 'name email');
+      .populate('members', 'name email')
+      .populate('pendingMembers', 'name email');
     res.json(projects);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -45,7 +46,8 @@ const getProjectById = async (req, res) => {
   try {
     const p = await Project.findById(req.params.id)
       .populate('owner', 'name email')
-      .populate('members', 'name email');
+      .populate('members', 'name email')
+      .populate('pendingMembers', 'name email');
     if (!p) return res.status(404).json({ message: 'Project not found' });
     res.json(p);
   } catch (err) {
@@ -72,13 +74,69 @@ const joinProject = async (req, res) => {
     const { userId } = req.body;
     const p = await Project.findById(req.params.id);
     if (!p) return res.status(404).json({ message: 'Project not found' });
+    // Only allow join if not already member or pending
     if (p.members.some(m => m.toString() === userId))
       return res.status(400).json({ message: 'Already a member' });
+    if (p.pendingMembers.some(m => m.toString() === userId))
+      return res.status(400).json({ message: 'Already requested to join' });
 
-    p.members.push(userId);
+    p.pendingMembers.push(userId);
     await p.save();
-    const populated = await p.populate('members', 'name email');
-    res.json(populated);
+    const populated = await Project.findById(p._id)
+      .populate('owner', 'name email')
+      .populate('members', 'name email')
+      .populate('pendingMembers', 'name email');
+    res.json({ message: 'Request sent, waiting for approval', project: populated });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// PUT /api/projects/:id/approve  { userId }
+const approveMember = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const p = await Project.findById(req.params.id);
+    if (!p) return res.status(404).json({ message: 'Project not found' });
+    // Only owner can approve
+    if (p.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    // Remove from pendingMembers, add to members
+    p.pendingMembers = p.pendingMembers.filter(m => m.toString() !== userId);
+    if (!p.members.some(m => m.toString() === userId)) {
+      p.members.push(userId);
+    }
+    await p.save();
+    const populated = await Project.findById(p._id)
+      .populate('owner', 'name email')
+      .populate('members', 'name email')
+      .populate('pendingMembers', 'name email');
+    res.json({ message: 'Member approved', project: populated });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// PUT /api/projects/:id/remove  { userId }
+const removeMember = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const p = await Project.findById(req.params.id);
+    if (!p) return res.status(404).json({ message: 'Project not found' });
+    // Only owner can remove
+    if (p.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    // Remove from members and pendingMembers
+    p.members = p.members.filter(m => m.toString() !== userId);
+    p.pendingMembers = p.pendingMembers.filter(m => m.toString() !== userId);
+    await p.save();
+    const populated = await Project.findById(p._id)
+      .populate('owner', 'name email')
+      .populate('members', 'name email')
+      .populate('pendingMembers', 'name email');
+    res.json({ message: 'Member removed', project: populated });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -122,11 +180,13 @@ const deleteProject = async (req, res) => {
 
 
 module.exports = {
-    createProject,
-    getProjects,
-    getProjectById,
-    updateProject,
-    joinProject,
-    toggleOpen,
-    deleteProject
-    };
+  createProject,
+  getProjects,
+  getProjectById,
+  updateProject,
+  joinProject,
+  toggleOpen,
+  deleteProject,
+  approveMember,
+  removeMember
+};

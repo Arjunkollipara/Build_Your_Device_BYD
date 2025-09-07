@@ -74,7 +74,7 @@ npm start
 * [x] User creation & project listing (basic prototype)
 * [X] Authentication & authorization (JWT, OAuth)
 * [X] Profile building with skills, links, and portfolio display
-* [X] Project creation with join requests & approval system
+* [ ] Project creation with join requests & approval system
 * [ ] Recommendation engine for skill-based team formation
 * [ ] Resource locator with credit/rental system
 * [ ] Gamified achievement system with badges & levels
