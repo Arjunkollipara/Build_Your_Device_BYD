@@ -35,7 +35,7 @@ Unlike traditional project listing platforms, ProjectHub focuses on **institutio
 ### **1. Clone the Repository**
 
 ```bash
-git clone https://github.com/your-username/projecthub.git
+git clone https://github.com/Arjunkollipara/projecthub.git
 cd projecthub
 ```
 
