@@ -1,4 +1,4 @@
-# **BYD-BUILD YOUR DEVICE – Collaborative Project Showcase & Team Builder**
+# **CAMPUS COLLAB – Collaborative Project Showcase & Team Builder**
 
 ## **Overview**
 
