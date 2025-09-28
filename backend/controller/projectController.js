@@ -68,16 +68,16 @@ const updateProject = async (req, res) => {
   }
 };
 
-// POST /api/projects/:id/join  { userId }
+// POST /api/projects/:id/join
 const joinProject = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId = req.user._id;
     const p = await Project.findById(req.params.id);
     if (!p) return res.status(404).json({ message: 'Project not found' });
     // Only allow join if not already member or pending
-    if (p.members.some(m => m.toString() === userId))
+    if (p.members.some(m => m.toString() === userId.toString()))
       return res.status(400).json({ message: 'Already a member' });
-    if (p.pendingMembers.some(m => m.toString() === userId))
+    if (p.pendingMembers.some(m => m.toString() === userId.toString()))
       return res.status(400).json({ message: 'Already requested to join' });
 
     p.pendingMembers.push(userId);

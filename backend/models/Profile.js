@@ -45,6 +45,10 @@ const ProfileSchema = new mongoose.Schema({
     type: [String], // list of achievements, badges, awards
     default: [],
   },
+  selectedBadges: {
+    type: [String], // badge ids selected by user
+    default: [],
+  },
 });
 
 module.exports = mongoose.model("Profile", ProfileSchema);

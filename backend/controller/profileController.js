@@ -10,6 +10,7 @@ const createOrUpdateProfile = async (req, res) => {
       skills = [],
       links = {},
       achievements = [],
+      selectedBadges = [],
     } = req.body;
 
     // Clean up links: only set if valid or blank
@@ -29,12 +30,12 @@ const createOrUpdateProfile = async (req, res) => {
       // update
       profile = await Profile.findOneAndUpdate(
         { userId },
-        { bio, avatar, details, skills: safeSkills, links: cleanLinks, achievements: safeAchievements },
+        { bio, avatar, details, skills: safeSkills, links: cleanLinks, achievements: safeAchievements, selectedBadges },
         { new: true }
       );
     } else {
       // create
-      profile = new Profile({ userId, bio, avatar, details, skills: safeSkills, links: cleanLinks, achievements: safeAchievements });
+      profile = new Profile({ userId, bio, avatar, details, skills: safeSkills, links: cleanLinks, achievements: safeAchievements, selectedBadges });
       await profile.save();
     }
 
