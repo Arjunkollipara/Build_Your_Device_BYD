@@ -5,6 +5,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true }, // hashed
   role: { type: String, enum: ['user', 'admin'], default: 'user' }, // role support
+  banned: { type: Boolean, default: false },
+  banReason: { type: String, default: '' },
   skills: { type: [String], default: [] },
   bio:    { type: String, default: '' },
   links: {

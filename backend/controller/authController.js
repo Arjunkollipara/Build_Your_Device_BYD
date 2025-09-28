@@ -20,7 +20,7 @@ const sanitize = (u) => ({
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, adminSecret } = req.body;
 
     if (!name || !email || !password)
       return res.status(400).json({ message: 'name, email, password are required' });
@@ -29,8 +29,11 @@ exports.signup = async (req, res) => {
     if (exists) return res.status(409).json({ message: 'Email already in use' });
 
     const hash = await bcrypt.hash(password, 10);
-    // Only allow 'user' or 'admin', default to 'user'
-    const userRole = role === 'admin' ? 'admin' : 'user';
+    // Only allow admin creation if a special secret is provided
+    let userRole = 'user';
+    if (role === 'admin' && adminSecret === process.env.ADMIN_SECRET) {
+      userRole = 'admin';
+    }
     const user = await User.create({ name, email, password: hash, role: userRole });
 
     const token = signToken(user._id);
@@ -48,6 +51,10 @@ exports.login = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+
+    if (user.banned) {
+      return res.status(403).json({ message: user.banReason || 'Your account has been banned.' });
+    }
 
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
