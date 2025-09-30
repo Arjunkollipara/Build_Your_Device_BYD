@@ -2,7 +2,7 @@
 
 ## **Overview**
 
-**ProjectHub** is a collaborative platform designed for colleges, schools, and organizations, enabling students to showcase their projects, find team members, and build a portfolio of their skills and contributions. It bridges the gap between talent discovery, project collaboration, and resource availability within academic ecosystems.
+**Campus-Collab** is a collaborative platform designed for colleges, schools, and organizations, enabling students to showcase their projects, find team members, and build a portfolio of their skills and contributions. It bridges the gap between talent discovery, project collaboration, and resource availability within academic ecosystems.
 
 ## **Key Features**
 
@@ -36,33 +36,53 @@ Unlike traditional project listing platforms, ProjectHub focuses on **institutio
 
 ```bash
 git clone https://github.com/Arjunkollipara/Build_Your_Device_BYD.git
-cd projecthub
+cd campus-collab
 ```
 
-### **2. Install Dependencies**
-
-```bash
-npm install
-```
-
-### **3. Configure Environment Variables**
+### **2. Configure Environment Variables**
 
 Create a `.env` file in the project root and set:
 
 ```
 MONGO_URI=<your-mongodb-connection-string>
 JWT_SECRET=<your-secret-key>
-PORT=5000
+PORT=<your-port>
+ADMIN_SECRET=<admin-secret-key>
+```
+
+### **3. Create two folders**
+
+campus-collab\frontend
+campus-collab\backend
+
+### **4. Install Dependencies for the Application**
+
+```bash
+# Backend dependencies
+cd backend
+npm init -y
+npm install express mongoose dotenv
+npm install --save-dev nodemon
+```
+
+```bash
+#Frontend dependencies
+cd frontend
+npx create-react-app .
+npm install axios
+npm install react-router-dom
 ```
 
 ### **4. Run the Application**
 
 ```bash
-# Start backend
+#Run backend
 cd backend
 npm run dev
+```
 
-# Start frontend
+```bash
+#Start frontend
 cd frontend
 npm start
 ```
