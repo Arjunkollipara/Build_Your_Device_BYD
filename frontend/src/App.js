@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import { getMe } from "./api/authApi";
 import "./App.css";
 
 // pages
 import ProfilePage from "./pages/ProfilePage";
 import ProjectsPage from "./pages/ProjectsPage";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import OwnerApprovalPage from "./pages/OwnerApprovalPage";
 // later: import AdminPage from "./pages/AdminPage";
 
 import SignupForm from "./components/auth/SignupForm";
@@ -27,9 +31,17 @@ function App() {
   }, []);
 
   const handleAuthed = (user) => setMe(user);
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setMe(null);
+  // Use a wrapper to access navigate
+  const LogoutButton = () => {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+      localStorage.removeItem("token");
+      setMe(null);
+      navigate("/");
+    };
+    return (
+      <button style={{ marginLeft: 10 }} onClick={handleLogout}>Logout</button>
+    );
   };
 
   // Check if profile is complete: bio is not empty and skills array has at least one skill
@@ -46,37 +58,41 @@ function App() {
   };
 
   if (!me) {
-    // show login/signup if not authenticated
+    // Unauthenticated: show only public routes
     return (
-      <div className="app-container">
-        <h1>CampusCollab</h1>
-        <SignupForm onAuthed={handleAuthed} />
-        <LoginForm onAuthed={handleAuthed} />
-      </div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage onAuthed={handleAuthed} />} />
+          <Route path="/signup" element={<SignupPage onAuthed={handleAuthed} />} />
+        </Routes>
+      </Router>
     );
   }
 
+  // Authenticated: show main app
   return (
     <Router>
       <div className="app-container">
-        <h1>CampusCollab</h1>
         <p>
           Logged in as: {me.name} ({me.email}){" "}
           <span style={{ marginLeft: 10, fontWeight: "bold" }}>Role: {me.role || "user"}</span>
-          <button style={{ marginLeft: 10 }} onClick={handleLogout}>Logout</button>
+          <LogoutButton />
         </p>
-
         <nav>
           <Link to="/profile">Profile</Link>
           <Link to="/projects">
             <button style={{ marginLeft: 10 }}>See Available Projects</button>
           </Link>
+            <Link to="/owner-approvals">
+              <button style={{ marginLeft: 10 }}>Pending Approvals</button>
+            </Link>
         </nav>
-
         <Routes>
+          <Route path="/" element={<Navigate to="/profile" />} />
           <Route path="/profile" element={<ProfilePage me={me} onProfileUpdated={refreshMe} />} />
           <Route path="/projects" element={<ProjectsPage me={me} />} />
-          <Route path="/" element={<Navigate to="/profile" />} />
+            <Route path="/owner-approvals" element={<OwnerApprovalPage me={me} />} />
         </Routes>
       </div>
     </Router>

@@ -1,0 +1,6 @@
+cd frontend
+npx create-react-app .
+
+cd frontend
+npm install axios
+

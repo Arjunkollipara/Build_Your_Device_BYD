@@ -1,0 +1,47 @@
+.badge-selection-container {
+  padding: 32px;
+  text-align: center;
+}
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 24px;
+}
+.badge-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(45,127,249,0.10);
+  padding: 18px 28px;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  font-size: 1.2rem;
+}
+.badge-card:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 6px 24px rgba(45,127,249,0.18);
+  background: #e3f0ff;
+}
+.badge-card.selected {
+  background: #2d7ff9;
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(45,127,249,0.18);
+}
+.badge-icon {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+}
+.badge-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.badge-feedback {
+  margin-top: 32px;
+  font-size: 1.1rem;
+  color: #6366f1;
+}
