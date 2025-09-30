@@ -1,19 +1,29 @@
+// PrivateRoute for admin
+import AdminPage from "./pages/AdminPage";
+
+function PrivateAdminRoute({ children }) {
+  const token = localStorage.getItem("token");
+  // You may want to check for role in a more robust way (e.g., context or API)
+  const isAdmin = token && JSON.parse(atob(token.split('.')[1])).role === "admin";
+  return isAdmin ? children : <Navigate to="/admin-login" />;
+}
+import OwnerApprovalPage from "./pages/OwnerApprovalPage";
+import ProfilePage from "./pages/ProfilePage";
+import ProjectsPage from "./pages/ProjectsPage";
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import { getMe } from "./api/authApi";
 import "./App.css";
 
 // pages
-import ProfilePage from "./pages/ProfilePage";
-import ProjectsPage from "./pages/ProjectsPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
 import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import OwnerApprovalPage from "./pages/OwnerApprovalPage";
 // later: import AdminPage from "./pages/AdminPage";
 
 import SignupForm from "./components/auth/SignupForm";
 import LoginForm from "./components/auth/LoginForm";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 
 function App() {
   const [me, setMe] = useState(null);
@@ -62,15 +72,34 @@ function App() {
     return (
       <Router>
         <Routes>
+          <Route path="/admin" element={
+            <PrivateAdminRoute>
+              <AdminPage />
+            </PrivateAdminRoute>
+          } />
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage onAuthed={handleAuthed} />} />
           <Route path="/signup" element={<SignupPage onAuthed={handleAuthed} />} />
+          <Route path="/admin-login" element={<AdminLoginPage />} />
         </Routes>
       </Router>
     );
   }
 
   // Authenticated: show main app
+  if (me.role === "admin") {
+    // Only show admin dashboard for /admin route
+    return (
+      <Router>
+        <Routes>
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="*" element={<Navigate to="/admin" />} />
+        </Routes>
+      </Router>
+    );
+  }
+
+  // Regular user view
   return (
     <Router>
       <div className="app-container">
@@ -92,7 +121,7 @@ function App() {
           <Route path="/" element={<Navigate to="/profile" />} />
           <Route path="/profile" element={<ProfilePage me={me} onProfileUpdated={refreshMe} />} />
           <Route path="/projects" element={<ProjectsPage me={me} />} />
-            <Route path="/owner-approvals" element={<OwnerApprovalPage me={me} />} />
+          <Route path="/owner-approvals" element={<OwnerApprovalPage me={me} />} />
         </Routes>
       </div>
     </Router>

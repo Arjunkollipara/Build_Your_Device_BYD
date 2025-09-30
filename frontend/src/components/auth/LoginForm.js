@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/authApi';
 
 export default function LoginForm({ onAuthed }) {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -14,6 +16,11 @@ export default function LoginForm({ onAuthed }) {
       const { user, token } = await login(form);
       localStorage.setItem('token', token);
       onAuthed(user);
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/profile');
+      }
     } catch (err) {
       setError(err?.response?.data?.message || 'Login failed');
     }
