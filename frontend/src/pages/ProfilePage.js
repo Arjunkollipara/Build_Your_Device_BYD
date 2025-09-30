@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./ProfilePage.css";
 import { useNavigate } from "react-router-dom";
 import ProfileForm from "../components/ProfileForm";
 import ProfileView from "../components/ProfileView";
@@ -51,24 +52,19 @@ const ProfilePage = ({ me, onProfileUpdated }) => {
   }
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh" }}>
-      <div style={{ background: "#fff", borderRadius: 24, boxShadow: "0 8px 32px rgba(0,0,0,0.08)", padding: 40, maxWidth: 480, width: "100%", textAlign: "center" }}>
-        {/* Avatar */}
-        <div style={{ marginBottom: 24 }}>
-          {me.avatar ? (
-            <img src={me.avatar} alt="avatar" style={{ width: 100, height: 100, borderRadius: "50%", objectFit: "cover", boxShadow: "0 4px 16px rgba(0,0,0,0.10)" }} />
-          ) : (
-            <div style={{ width: 100, height: 100, borderRadius: "50%", background: "#e0eafc", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48, color: "#2d3a4a", margin: "0 auto", boxShadow: "0 4px 16px rgba(0,0,0,0.10)" }}>
-              {me.name ? me.name[0] : "?"}
-            </div>
-          )}
-        </div>
-        <h2 style={{ color: "#2d3a4a", marginBottom: 8 }}>My Profile</h2>
-        <div style={{ color: "#4a5a6a", fontSize: "1.1rem", marginBottom: 18 }}>{me.email}</div>
-        <ProfileView userId={me._id} />
+    <div className="profile-page-bg">
+      {/* Animated background shapes */}
+      <div className="profile-bg-shapes">
+        <div className="profile-bg-shape1" />
+        <div className="profile-bg-shape2" />
+        <div className="profile-bg-shape3" />
+      </div>
+      <div className="profile-card-anim">
+        {/* ProfileView and buttons go here */}
+        <ProfileView profile={profile} />
         <div style={{ marginTop: 32 }}>
-          <button onClick={() => setEditing(true)} style={{ marginRight: 12, padding: "10px 28px", borderRadius: 8, background: "#a1c4fd", color: "#2d3a4a", fontWeight: 600, border: "none", fontSize: "1rem" }}>Edit Profile</button>
-          <button onClick={() => navigate("/projects")} style={{ padding: "10px 28px", borderRadius: 8, background: "#fbc2eb", color: "#2d3a4a", fontWeight: 600, border: "none", fontSize: "1rem" }}>Go to Projects</button>
+          <button className="profile-btn-anim" onClick={() => setEditing(true)} style={{ marginRight: 12, padding: "10px 28px", borderRadius: 8, background: "#a1c4fd", color: "#2d3a4a", fontWeight: 600, border: "none", fontSize: "1rem" }}>Edit Profile</button>
+          <button className="profile-btn-anim" onClick={() => navigate("/projects")} style={{ padding: "10px 28px", borderRadius: 8, background: "#fbc2eb", color: "#2d3a4a", fontWeight: 600, border: "none", fontSize: "1rem" }}>Go to Projects</button>
         </div>
       </div>
     </div>
