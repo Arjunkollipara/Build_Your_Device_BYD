@@ -2,7 +2,7 @@
 
 ## **Overview**
 
-**Campus-Collab** is a collaborative platform designed for colleges, schools, and organizations, enabling students to showcase their projects, find team members, and build a portfolio of their skills and contributions. It bridges the gap between talent discovery, project collaboration, and resource availability within academic ecosystems.
+**Campus-Collab** is a collaborative platform which is being developed for colleges, schools, and organizations, enabling students to showcase their projects, find team members, and build a portfolio of their skills and contributions. It bridges the gap between talent discovery, project collaboration, and resource availability within academic ecosystems.
 
 ## **Key Features**
 
@@ -26,7 +26,7 @@
 
 ## **Why is it Unique?**
 
-Unlike traditional project listing platforms, ProjectHub focuses on **institution-level collaboration** with features like smart team suggestions, resource sharing, and real-time portfolio updates. It’s not just a repository; it’s a **growth and networking ecosystem** for students and innovators.
+Unlike traditional project listing platforms, CampusCollab focuses on **institution-level collaboration** with features like smart team suggestions, resource sharing, and real-time portfolio updates. It’s not just a repository; it’s a **growth and networking ecosystem** for students and innovators.
 
 ---
 
@@ -35,7 +35,7 @@ Unlike traditional project listing platforms, ProjectHub focuses on **institutio
 ### **1. Clone the Repository**
 
 ```bash
-git clone https://github.com/Arjunkollipara/Build_Your_Device_BYD.git
+git clone https://github.com/Arjunkollipara/campus-collab.git
 cd campus-collab
 ```
 
